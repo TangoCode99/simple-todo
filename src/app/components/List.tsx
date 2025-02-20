@@ -1,10 +1,16 @@
 'use client';
 import { useState } from 'react';
+import { Task } from '../types/task';
 import Modal from './Modal';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 
-export default function List({ title }: { title: string }) {
+type ListProps = {
+    title: string;
+    tasks: Task[]; // Expect an array of Task objects
+  };
+
+  export default function List({ title, tasks }: ListProps) {
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
     const [taskName, setTaskName] = useState("");
@@ -23,7 +29,24 @@ export default function List({ title }: { title: string }) {
                 {title == 'Tasks' ? <button onClick={() => setIsAddTaskModalOpen(true)}><AddIcon /></button> : ''}
             </div>
             <div className="flex flex-col divide-y divide-gray-200">
-                <div className="flex flex-row group justify-between items-center my-1">
+                {tasks.length > 0 ? (
+                    tasks.map((task) => (
+                        <div key={task.id} className="flex flex-row group justify-between items-center my-1">
+                            <div>
+                                <h3>{task.title}</h3>
+                                <p className="text-xs text-gray-400">Due on {task.dueDate}</p>
+                            </div>
+                            <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                                <button>
+                                    <EditIcon fontSize='small' />
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <p>No tasks found.</p>
+                )}
+                {/* <div className="flex flex-row group justify-between items-center my-1">
                     <div>
                         <h3>Task One</h3>
                         <p className="text-xs text-gray-400">Due on March 5, 2024</p>
@@ -41,7 +64,7 @@ export default function List({ title }: { title: string }) {
                 <div className="my-1">
                     <h3>Task Three</h3>
                     <p className="text-xs text-gray-400">Due on May 5, 2024</p>
-                </div>
+                </div> */}
             </div>
             <Modal isOpen={isAddTaskModalOpen} onClose={() => setIsAddTaskModalOpen(false)} title="Add Task">
                 <input

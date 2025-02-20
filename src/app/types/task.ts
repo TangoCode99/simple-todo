@@ -1,9 +1,6 @@
-interface TaskInterface {
-    id: number;
-    task: string;
-    description: string;
-    date: string;
-    completed: boolean;
+export type Task = {
+  id: number;
+  title: string;
+  dueDate?: string;
+  status: "pending" | "in-progress" | "completed";
 };
-
-export type { TaskInterface };
