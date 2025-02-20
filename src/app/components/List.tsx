@@ -46,25 +46,6 @@ type ListProps = {
                 ) : (
                     <p>No tasks found.</p>
                 )}
-                {/* <div className="flex flex-row group justify-between items-center my-1">
-                    <div>
-                        <h3>Task One</h3>
-                        <p className="text-xs text-gray-400">Due on March 5, 2024</p>
-                    </div>
-                    <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                        <button>
-                            <EditIcon fontSize='small' />
-                        </button>
-                    </div>
-                </div>
-                <div className="my-1">
-                    <h3>Task Two</h3>
-                    <p className="text-xs text-gray-400">Due on April 5, 2024</p>
-                </div>
-                <div className="my-1">
-                    <h3>Task Three</h3>
-                    <p className="text-xs text-gray-400">Due on May 5, 2024</p>
-                </div> */}
             </div>
             <Modal isOpen={isAddTaskModalOpen} onClose={() => setIsAddTaskModalOpen(false)} title="Add Task">
                 <input
