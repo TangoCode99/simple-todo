@@ -1,32 +1,51 @@
 'use client';
-import { useState } from 'react';
 import { Task } from '../types/task';
-import Modal from './Modal';
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 
 type ListProps = {
     title: string;
     tasks: Task[]; // Expect an array of Task objects
-  };
+    onEdit: (task: Task) => void;
+};
 
-  export default function List({ title, tasks }: ListProps) {
-    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+];
 
-    const [taskName, setTaskName] = useState("");
+function parseDate(newDate: string) {
+    const currentTime = new Date();
+    const taskDate = new Date(newDate);
 
-    const handleAddTask = () => {
-        if (!taskName.trim()) return;
-        console.log("Task Added:", taskName);
-        setTaskName(""); // Clear input
-        setIsAddTaskModalOpen(false); // Close modal
-    };
+    if (currentTime > taskDate) {
+        return (
+            <div className='text-red-600'>OVERDUE ({months[taskDate.getMonth()]} {taskDate.getDate()})</div>
+        );
+    }
 
+    return (
+        <div>
+            Due on {months[taskDate.getMonth()]} {taskDate.getDate()}, {taskDate.getFullYear()}
+        </div>
+    );
+
+}
+
+export default function List({ title, tasks, onEdit }: ListProps) {
     return (
         <div className="bg-white rounded-md w-full h-full mx-4 text-black p-2 border-2">
             <div className='flex flex-row justify-between border-b items-center'>
                 <h1 className="font-semibold mb-1 text-2xl">{title}</h1>
-                {title == 'Tasks' ? <button onClick={() => setIsAddTaskModalOpen(true)}><AddIcon /></button> : ''}
             </div>
             <div className="flex flex-col divide-y divide-gray-200">
                 {tasks.length > 0 ? (
@@ -34,10 +53,10 @@ type ListProps = {
                         <div key={task.id} className="flex flex-row group justify-between items-center my-1">
                             <div>
                                 <h3>{task.title}</h3>
-                                <p className="text-xs text-gray-400">Due on {task.dueDate}</p>
+                                {task.status != "completed" ? <p className="text-xs text-gray-400">{parseDate(task.dueDate!)}</p> : ""}
                             </div>
                             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                                <button>
+                                <button onClick={() => onEdit(task)}>
                                     <EditIcon fontSize='small' />
                                 </button>
                             </div>
@@ -47,29 +66,6 @@ type ListProps = {
                     <p>No tasks found.</p>
                 )}
             </div>
-            <Modal isOpen={isAddTaskModalOpen} onClose={() => setIsAddTaskModalOpen(false)} title="Add Task">
-                <input
-                    type="text"
-                    className="w-full border p-2 rounded mb-4"
-                    placeholder="Enter task name..."
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAddTask(); // Submit with Enter
-                    }}
-                />
-                <div className="flex justify-end">
-                    <button
-                        className="px-4 py-2 bg-gray-400 text-white rounded mr-2"
-                        onClick={() => setIsAddTaskModalOpen(false)}
-                    >
-                        Cancel
-                    </button>
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded" onClick={handleAddTask}>
-                        Save Task
-                    </button>
-                </div>
-            </Modal>
         </div>
     );
 }
