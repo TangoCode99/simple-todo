@@ -17,8 +17,12 @@ export default function Modal({ isOpen, onClose, onSave, initialTask }: TaskModa
   useEffect(() => {
     if (initialTask) {
       setTitle(initialTask.title);
-      setDueDate(initialTask.dueDate || "");
       setStatus(initialTask.status);
+      const dueDate = initialTask.dueDate ? new Date(initialTask.dueDate) : null;
+      if (dueDate) {
+        const utcDate = dueDate.toISOString().split("T")[0];  // YYYY-MM-DD
+        setDueDate(utcDate);
+      }
     } else {
       setTitle("");
       setDueDate("");

@@ -32,6 +32,7 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchTasks = async () => {
     try {
@@ -40,6 +41,8 @@ export default function Home() {
       setTasks(data);
     } catch (error) {
       console.error("Error fetching tasks:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,10 +72,10 @@ export default function Home() {
     setEditingTask(null);
   };
 
-    // Filter tasks by status
-    const pendingTasks = tasks.filter((task) => task.status === "pending");
-    const inProgressTasks = tasks.filter((task) => task.status === "in-progress");
-    const completedTasks = tasks.filter((task) => task.status === "completed");
+  // Filter tasks by status
+  const pendingTasks = tasks.filter((task) => task.status === "pending");
+  const inProgressTasks = tasks.filter((task) => task.status === "in-progress");
+  const completedTasks = tasks.filter((task) => task.status === "completed");
 
   return (
     <div className="justify-items-center w-auto">
@@ -81,42 +84,43 @@ export default function Home() {
       <button onClick={() => setModalOpen(true)} className="absolute bottom-0 right-0 bg-white text-black font-bold p-3 rounded-full m-6">
         + Add Task
       </button>
-      <div className="flex justify-evenly w-full">
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => {
-          setModalOpen(false);
-          setEditingTask(null);
-        }}
-        onSave={handleSaveTask}
-        initialTask={editingTask}
-      />
-
-      <List
-        title="🟡 Pending Tasks"
-        tasks={pendingTasks}
-        onEdit={(task) => {
-          setEditingTask(task);
-          setModalOpen(true);
-        }}
-      />
-      <List
-        title="🔵 In-Progress Tasks"
-        tasks={inProgressTasks}
-        onEdit={(task) => {
-          setEditingTask(task);
-          setModalOpen(true);
-        }}
-      />
-      <List
-        title="🟢 Completed Tasks"
-        tasks={completedTasks}
-        onEdit={(task) => {
-          setEditingTask(task);
-          setModalOpen(true);
-        }}
-      />
-      </div>
+      {loading ? (<div className="text-xl">Loading tasks... Please wait a moment.</div>) : (
+        <div className="flex justify-evenly w-full">
+          <Modal
+            isOpen={modalOpen}
+            onClose={() => {
+              setModalOpen(false);
+              setEditingTask(null);
+            }}
+            onSave={handleSaveTask}
+            initialTask={editingTask}
+          />
+          <List
+            title="🟡 Pending Tasks"
+            tasks={pendingTasks}
+            onEdit={(task) => {
+              setEditingTask(task);
+              setModalOpen(true);
+            }}
+          />
+          <List
+            title="🔵 In-Progress Tasks"
+            tasks={inProgressTasks}
+            onEdit={(task) => {
+              setEditingTask(task);
+              setModalOpen(true);
+            }}
+          />
+          <List
+            title="🟢 Completed Tasks"
+            tasks={completedTasks}
+            onEdit={(task) => {
+              setEditingTask(task);
+              setModalOpen(true);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

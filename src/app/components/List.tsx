@@ -35,7 +35,7 @@ function parseDate(newDate: string) {
 
     return (
         <div>
-            Due on {months[taskDate.getMonth()]} {taskDate.getDate()}, {taskDate.getFullYear()}
+            Due on {months[taskDate.getMonth()]} {taskDate.getDate() + 1}, {taskDate.getFullYear()}
         </div>
     );
 
@@ -53,7 +53,7 @@ export default function List({ title, tasks, onEdit }: ListProps) {
                         <div key={task.id} className="flex flex-row group justify-between items-center my-1">
                             <div>
                                 <h3>{task.title}</h3>
-                                {task.status != "completed" ? <p className="text-xs text-gray-400">{parseDate(task.dueDate!)}</p> : ""}
+                                {task.status != "completed" ? <div className="text-xs text-gray-400">{parseDate(task.dueDate!)}</div> : ""}
                             </div>
                             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
                                 <button onClick={() => onEdit(task)}>
