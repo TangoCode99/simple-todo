@@ -1,6 +1,7 @@
 'use client';
 import { Task } from '../types/task';
 import EditIcon from '@mui/icons-material/Edit';
+import { MONTHS } from '../util/dateUtils';
 
 type ListProps = {
     title: string;
@@ -8,34 +9,19 @@ type ListProps = {
     onEdit: (task: Task) => void;
 };
 
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
-
 function parseDate(newDate: string) {
     const currentTime = new Date();
     const taskDate = new Date(newDate);
 
     if (currentTime > taskDate) {
         return (
-            <div className='text-red-600'>OVERDUE ({months[taskDate.getMonth()]} {taskDate.getDate()})</div>
+            <div className='text-red-600'>OVERDUE ({MONTHS[taskDate.getMonth()]} {taskDate.getDate()})</div>
         );
     }
 
     return (
         <div>
-            Due on {months[taskDate.getMonth()]} {taskDate.getDate() + 1}, {taskDate.getFullYear()}
+            Due on {MONTHS[taskDate.getMonth()]} {taskDate.getDate() + 1}, {taskDate.getFullYear()}
         </div>
     );
 
