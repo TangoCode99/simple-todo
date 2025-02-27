@@ -1,12 +1,14 @@
 'use client';
 import { Task } from '../types/task';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { MONTHS } from '../util/dateUtils';
 
 type ListProps = {
     title: string;
     tasks: Task[]; // Expect an array of Task objects
     onEdit: (task: Task) => void;
+    deleteTask: (task: Task) => void;
 };
 
 function parseDate(newDate: string) {
@@ -27,7 +29,7 @@ function parseDate(newDate: string) {
 
 }
 
-export default function List({ title, tasks, onEdit }: ListProps) {
+export default function List({ title, tasks, onEdit, deleteTask }: ListProps) {
     return (
         <div className="bg-white rounded-md w-full h-full mx-4 text-black p-2 border-2">
             <div className='flex flex-row justify-between border-b items-center'>
@@ -42,14 +44,17 @@ export default function List({ title, tasks, onEdit }: ListProps) {
                                 {task.status != "completed" ? <div className="text-xs text-gray-400">{parseDate(task.dueDate!)}</div> : ""}
                             </div>
                             <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                                <button onClick={() => onEdit(task)}>
+                                <button className='mx-1 text-blue-500' onClick={() => onEdit(task)}>
                                     <EditIcon fontSize='small' />
+                                </button>
+                                <button className='mx-1 text-red-500' onClick={() => deleteTask(task)}>
+                                    <DeleteIcon fontSize='small' />
                                 </button>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p>No tasks found.</p>
+                    <p className='my-2 italic'>No tasks found.</p>
                 )}
             </div>
         </div>

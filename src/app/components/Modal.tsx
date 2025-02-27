@@ -47,6 +47,9 @@ export default function Modal({ isOpen, onClose, onSave, initialTask }: TaskModa
       document.addEventListener("keydown", handleKeyDown);
     } else {
       document.removeEventListener("keydown", handleKeyDown);
+      setTitle("");
+      setDueDate("");
+      setStatus("pending");
     }
 
     return () => document.removeEventListener("keydown", handleKeyDown);

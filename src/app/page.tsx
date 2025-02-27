@@ -19,6 +19,8 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTask, setDeleteTask] = useState<Task | null>(null);
 
   const fetchTasks = async () => {
     try {
@@ -58,6 +60,30 @@ export default function Home() {
     setEditingTask(null);
   };
 
+  // Open up delete confirmation modal.
+  const handleDeleteTask = (task: Task) => {
+    setShowDeleteModal(true);
+    setDeleteTask(task);
+  };
+
+  // Calls the backend api call.
+  const handlePermanentDelete = async (taskId: number) => {
+    try {
+      const res = await fetch(`/api/task/${taskId}`, { method: "DELETE" });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete task");
+      }
+
+      console.log("Task deleted from database");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setShowDeleteModal(false);
+      fetchTasks();
+    }
+  };
+
   // Filter tasks by status
   const pendingTasks = tasks.filter((task) => task.status === "pending");
   const inProgressTasks = tasks.filter((task) => task.status === "in-progress");
@@ -82,29 +108,57 @@ export default function Home() {
             initialTask={editingTask}
           />
           <List
-            title="🟡 Pending Tasks"
+            title="Pending"
             tasks={pendingTasks}
             onEdit={(task) => {
               setEditingTask(task);
               setModalOpen(true);
             }}
+            deleteTask={(task) => {
+              handleDeleteTask(task)
+            }}
           />
           <List
-            title="🔵 In-Progress Tasks"
+            title="In-Progress"
             tasks={inProgressTasks}
             onEdit={(task) => {
               setEditingTask(task);
               setModalOpen(true);
             }}
+            deleteTask={handleDeleteTask}
           />
           <List
-            title="🟢 Completed Tasks"
+            title="Completed"
             tasks={completedTasks}
             onEdit={(task) => {
               setEditingTask(task);
               setModalOpen(true);
             }}
+            deleteTask={handleDeleteTask}
           />
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 transition-transform duration-300 transform scale-95 animate-fade-in">
+            <div className="flex justify-between items-center text-black mb-4">
+              <h2>Are you sure you want to delete this task?</h2>
+              <button onClick={() => setShowDeleteModal(false)} className="text-gray-500 hover:text-gray-800">
+                ✖
+              </button>
+            </div>
+            <div className="text-black italic my-2">
+              <span>- {deleteTask?.title} -</span>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button onClick={() => setShowDeleteModal(false)} className="bg-gray-300 p-1 rounded">
+                Cancel
+              </button>
+              <button onClick={() => handlePermanentDelete(deleteTask!.id)} className="bg-red-500 text-white p-1 rounded">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
